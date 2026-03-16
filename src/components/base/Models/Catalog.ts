@@ -1,0 +1,54 @@
+import {IProduct} from "../../../types";
+
+export class Catalog {
+    private productCatalog: IProduct[] = [];
+
+    private selectedProduct: IProduct | null = null;
+
+    constructor(initialProducts: IProduct[] = []) {
+        // Валидируем входные параметры 
+        if (!Array.isArray(initialProducts)) {
+            throw new Error("Параметр initialProducts должен быть массивом IProduct[]");
+        }
+        for (const product of initialProducts) {
+            if (product === null || typeof product !== 'object') {
+                throw new Error("Каждый элемент массива initialProducts должен быть объектом");
+            }
+        }
+        
+        this.productCatalog = initialProducts;
+    }
+
+    getItems(): IProduct[] {
+        // Возвращает массив всех товаров
+        return this.productCatalog;
+    }
+
+    setItems(products: IProduct[]): void {
+        // Сохраняет массив товаров, полученный в параметрах метода
+        if (!Array.isArray(products)) {
+            throw new Error("Параметр должен быть массивом IProduct[]");
+        }
+        this.productCatalog = products;
+    }
+
+    getItem(id: string): IProduct | null {
+    // Ищем товар с указанным id
+        const product = this.productCatalog.find((item) => item.id === id);
+        // Возвращаем найденный товар или null, если не найден
+        return product || null;
+    }
+
+    setSelectedItem(product: IProduct): void {
+        // Сохраняет товар для подробного отображения
+        if (product === null || typeof product !== 'object' || !product.id) {
+            throw new Error("Параметр должен быть объектом IProduct");
+        }
+        this.selectedProduct = product;
+    }
+
+    getSelectedItem(): IProduct | null {
+        // Возвращает товар, выбранный для подробного отображения
+        return this.selectedProduct;
+    }
+}
