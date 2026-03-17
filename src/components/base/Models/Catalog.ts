@@ -19,17 +19,19 @@ export class Catalog {
         this.productCatalog = initialProducts;
     }
 
-    getItems(): IProduct[] {
+    // геттер 
+    get products(): IProduct[] {
         // Возвращает массив всех товаров
         return this.productCatalog;
     }
 
-    setItems(products: IProduct[]): void {
+    // сеттер
+    set products(productsList: IProduct[]) {
         // Сохраняет массив товаров, полученный в параметрах метода
-        if (!Array.isArray(products)) {
+        if (!Array.isArray(productsList)) {
             throw new Error("Параметр должен быть массивом IProduct[]");
         }
-        this.productCatalog = products;
+        this.productCatalog = productsList;
     }
 
     getItem(id: string): IProduct | null {

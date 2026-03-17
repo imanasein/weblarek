@@ -1,7 +1,7 @@
 import {IProduct} from "../../../types";
 
 export class Cart {
-    private cartList: IProduct[] = [];
+    private cartList: IProduct[] = [];  // Хранит массив товаров 
 
     getCartList(): IProduct[] {
         // Получает массив товаров, находящихся в корзине
@@ -26,8 +26,10 @@ export class Cart {
     removeItem(product: IProduct): void {
         // Удаляет товар из корзины
         const index = this.cartList.findIndex((item) => item.id === product.id);
-        if (index !== -1) {
+        if (index !== -1) {         // если найденный индекс не последний 
             this.cartList.splice(index, 1);
+        } else {                    // А если последний, очищаем массив
+            this.cartList = [];
         }
     }
 
@@ -40,7 +42,8 @@ export class Cart {
         // Получает общую стоимость всех товаров в корзине
         return this.cartList.reduce((total, item) => {
             if (typeof item.price !== 'number') {
-                throw new Error(`Цена товара ${item.id} не является числом`);
+                console.warn(`Цена товара ${item.id} бесценна!`);
+                return total + 0;       // В случае бесценного товара, считаем её равной нулю
             }
             return total + item.price;
         }, 0);
