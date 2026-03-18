@@ -1,7 +1,8 @@
 import "./scss/styles.scss";
-import { IBuyer, TPayment, IProduct, IApi, ProductsResponse, OrderData, OrderResponse } from "./types";
-import { Api } from "./components/base/Api";
+import {IBuyer, TPayment, IProduct, IApi, ProductsResponse, OrderData, OrderResponse} from "./types";
+import {Api} from "./components/base/Api";
 
+// Класс каталог товаров
 export class Catalog {
     private productCatalog: IProduct[] = [];
 
@@ -55,6 +56,7 @@ export class Catalog {
     }
 }
 
+// Класс корзина покупателя
 export class Cart {
     private cartList: IProduct[] = [];
 
@@ -112,6 +114,7 @@ export class Cart {
     }
 }
 
+// Класс Покупатель
 export class Buyer implements IBuyer {
     private buyerPayment: TPayment = "";
     private buyerEmail: string = "";
@@ -219,54 +222,132 @@ export class Buyer implements IBuyer {
     }
 }
 
-export class ProductService {
+// Класс коммуникации с сервером
+export class Communication {
     private api: IApi;
 
     constructor(api: IApi) {
         this.api = api;
     }
 
-    /**
-     * Получает список товаров с сервера
-     * @returns Объект с общим количеством товаров и массивом продуктов
-     */
     async getProducts(): Promise<ProductsResponse> {
         return this.api.get<ProductsResponse>("/product/");
     }
 
-    /**
-     * Отправляет заказ на сервер
-     * @param orderData Данные заказа (покупатель IBuyer + список ID товаров + итоговая сумма)
-     * @returns Объект с ID заказа и итоговой суммой
-     */
     async createOrder(orderData: OrderData): Promise<OrderResponse> {
         return this.api.post<OrderResponse>("/order/", orderData);
     }
 }
 
+// Проверка работы классов и методов
 const baseUrl = "https://larek-api.nomoreparties.co/api/weblarek";
 const api = new Api(baseUrl);
 
 // Создание сервиса для работы с товарами
-const productService = new ProductService(api);
+const productService = new Communication(api);
 
 const catalog = new Catalog();
 
-// Основной код: получаем товары и сохраняем в модель
+// Тестирование работы классов и методов
 async function initApp() {
     try {
-        // GET‑запрос на /product/
+        // 1. GET‑запрос на эндпоинт /product/
         const response: ProductsResponse = await productService.getProducts();
+
+        // 2. Тестирование класса Catalog
+        console.log("*Тестирование класса Catalog*");
 
         // Сохраняем массив товаров в модель каталога
         catalog.setItems(response.items);
+        console.log("2.1. Каталог товаров (после setItems):", catalog.getItems());
 
-        // Выводим каталог в консоль
-        console.log("Каталог товаров:", catalog.getItems());
+        // Получаем товар по ID
+        const prodButton = catalog.getItem("1c521d84-c48d-48fa-8cfb-9d911fa515fd");
+        console.log("2.2. Получили товар по ID:", prodButton);
+
+        // Устанавливаем выбранный товар
+        catalog.setSelectedItem(prodButton!);
+        console.log("2.3. Выбранный товар (после setSelectedItem):", catalog.getSelectedItem());
+
+        // Очищаем выбранный товар
+        catalog.setSelectedItem({
+            id: "id-25",
+            title: "Забор",
+            price: 500,
+            category: "Стройка",
+            description: "Отличная вещь от надоедливых и любопытных соседей",
+            image: "ШШШ",
+        });
+        console.log("2.4. Выбранный товар после очистки:", catalog.getSelectedItem());
+
+        // 3. Тестирование класса Cart
+        console.log("*Тестирование класса Cart*");
+        const cart = new Cart();
+
+        // Добавляем товары в корзину
+        cart.addItem(response.items[0]);
+        cart.addItem(response.items[1]);
+        console.log("3.1. Корзина после добавления 2 товаров:", cart.getCartList());
+
+        // Проверяем наличие товара в корзине
+        console.log("3.2. Товар с ID 854cef69-976d-4c2a-a18c-2aa45046c390 в корзине:",cart.isItemInCart("854cef69-976d-4c2a-a18c-2aa45046c390"));
+
+        // Получаем общую стоимость
+        console.log("3.3. Общая стоимость товаров в корзине:", cart.getTotalPrice());
+
+        // Получаем количество товаров
+        console.log("3.4. Количество товаров в корзине:", cart.getItemsQuantity());
+
+        // Удаляем товар из корзины
+        cart.removeItem(response.items[0]);
+        console.log("3.5. Корзина после удаления 1 товара:", cart.getCartList());
+
+        // Очищаем корзину
+        cart.deleteAll();
+        console.log("3.6. Корзина после очистки:", cart.getCartList());
+
+        // 4. Тестирование класса Buyer
+        console.log("*Тестирование класса Buyer*");
+        const buyer = new Buyer("card", "rom@cocacola.com", "+79991234567", "ул. Набережная, д. 1, кв 9");
+
+        // Выводим данные покупателя
+        console.log("4.1. Данные покупателя (после создания):", buyer.getBuyer());
+
+        // Обновляем данные покупателя
+        buyer.updateBuyerData({email: "new@example.com", phone: "+79182233221"});
+        console.log("4.2. Данные покупателя после обновления:", buyer.getBuyer());
+
+        // Проверяем валидацию
+        console.log("4.3. Проверка валидации (корректные данные):", buyer.validate());
+
+        // Очищаем данные покупателя
+        buyer.clearBuyerData();
+        console.log("4.4. Данные покупателя после очистки:", buyer.getBuyer());
+
+        // Проверяем валидацию после очистки
+        console.log("4.5. Проверка валидации (пустые данные):", buyer.validate());
+
+        // 5. Тестирование класса Communication (дополнительные вызовы)
+        console.log("*Тестирование класса Communication*");
+
+        // Создаем заказ
+        const selectedItems = response.items.slice(0, 2); // берём 2 товара
+        const totalPrice = selectedItems.reduce((sum, item) => sum + (item.price ?? 0), 0); // у некоторых товаров цены нет!
+
+        const orderData: OrderData = {
+            payment: "card",
+            email: "test@example.com",
+            phone: "+79991234567",
+            address: "ул. Примерная, д. 1",
+            items: selectedItems.map((item) => item.id), // ID товаров
+            total: totalPrice, // добавляем общую сумму
+        };
+
+        const orderResponse: OrderResponse = await productService.createOrder(orderData);
+        console.log("5.1. Ответ сервера после создания заказа:", orderResponse);
     } catch (error) {
-        console.error("Ошибка при загрузке товаров:", error);
+        console.error("Ошибка при выполнении тестов:", error);
     }
 }
 
-// Запуск приложения
 initApp();
