@@ -1,5 +1,3 @@
-import { IApi } from '../../types/index';
-
 export type ApiPostMethods = 'POST' | 'PUT' | 'DELETE';
 
 export class Api {

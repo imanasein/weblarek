@@ -1,6 +1,6 @@
-import './scss/styles.scss';
+import "./scss/styles.scss";
 import { IBuyer, TPayment, IProduct, IApi, ProductsResponse, OrderData, OrderResponse } from "./types";
-import { Api } from './components/base/Api';
+import { Api } from "./components/base/Api";
 
 export class Catalog {
     private productCatalog: IProduct[] = [];
@@ -8,16 +8,16 @@ export class Catalog {
     private selectedProduct: IProduct | null = null;
 
     constructor(initialProducts: IProduct[] = []) {
-        // Валидируем входные параметры 
+        // Валидируем входные параметры
         if (!Array.isArray(initialProducts)) {
             throw new Error("Параметр initialProducts должен быть массивом IProduct[]");
         }
         for (const product of initialProducts) {
-            if (product === null || typeof product !== 'object') {
+            if (product === null || typeof product !== "object") {
                 throw new Error("Каждый элемент массива initialProducts должен быть объектом");
             }
         }
-        
+
         this.productCatalog = initialProducts;
     }
 
@@ -35,7 +35,7 @@ export class Catalog {
     }
 
     getItem(id: string): IProduct | null {
-    // Ищем товар с указанным id
+        // Ищем товар с указанным id
         const product = this.productCatalog.find((item) => item.id === id);
         // Возвращаем найденный товар или null, если не найден
         return product || null;
@@ -43,7 +43,7 @@ export class Catalog {
 
     setSelectedItem(product: IProduct): void {
         // Сохраняет товар для подробного отображения
-        if (product === null || typeof product !== 'object' || !product.id) {
+        if (product === null || typeof product !== "object" || !product.id) {
             throw new Error("Параметр должен быть объектом IProduct");
         }
         this.selectedProduct = product;
@@ -54,10 +54,6 @@ export class Catalog {
         return this.selectedProduct;
     }
 }
-
-
-
-
 
 export class Cart {
     private cartList: IProduct[] = [];
@@ -73,7 +69,7 @@ export class Cart {
             throw new Error("Товар должен иметь id");
         }
         // Проверка на дубликат
-        const existingItem = this.cartList.find(item => item.id === product.id);
+        const existingItem = this.cartList.find((item) => item.id === product.id);
         if (existingItem) {
             // Если дубликат товара найден
             throw new Error("Товар уже есть в карзине");
@@ -98,7 +94,7 @@ export class Cart {
     getTotalPrice(): number {
         // Получает общую стоимость всех товаров в корзине
         return this.cartList.reduce((total, item) => {
-            if (typeof item.price !== 'number') {
+            if (typeof item.price !== "number") {
                 throw new Error(`Цена товара ${item.id} не является числом`);
             }
             return total + item.price;
@@ -115,10 +111,6 @@ export class Cart {
         return this.cartList.some((item) => item.id === id);
     }
 }
-
-
-
-
 
 export class Buyer implements IBuyer {
     private buyerPayment: TPayment = "";
@@ -227,38 +219,32 @@ export class Buyer implements IBuyer {
     }
 }
 
-
-
-
 export class ProductService {
-  private api: IApi;
+    private api: IApi;
 
-  constructor(api: IApi) {
-    this.api = api;
-  }
+    constructor(api: IApi) {
+        this.api = api;
+    }
 
-  /**
-   * Получает список товаров с сервера
-   * @returns Объект с общим количеством товаров и массивом продуктов
-   */
-  async getProducts(): Promise<ProductsResponse> {
-    return this.api.get<ProductsResponse>('/product/');
-  }
+    /**
+     * Получает список товаров с сервера
+     * @returns Объект с общим количеством товаров и массивом продуктов
+     */
+    async getProducts(): Promise<ProductsResponse> {
+        return this.api.get<ProductsResponse>("/product/");
+    }
 
-  /**
-   * Отправляет заказ на сервер
-   * @param orderData Данные заказа (покупатель IBuyer + список ID товаров + итоговая сумма)
-   * @returns Объект с ID заказа и итоговой суммой
-   */
-  async createOrder(orderData: OrderData): Promise<OrderResponse> {
-    return this.api.post<OrderResponse>('/order/', orderData);
-  }
+    /**
+     * Отправляет заказ на сервер
+     * @param orderData Данные заказа (покупатель IBuyer + список ID товаров + итоговая сумма)
+     * @returns Объект с ID заказа и итоговой суммой
+     */
+    async createOrder(orderData: OrderData): Promise<OrderResponse> {
+        return this.api.post<OrderResponse>("/order/", orderData);
+    }
 }
 
-
-
-
-const baseUrl = 'https://larek-api.nomoreparties.co/api/weblarek';
+const baseUrl = "https://larek-api.nomoreparties.co/api/weblarek";
 const api = new Api(baseUrl);
 
 // Создание сервиса для работы с товарами
@@ -268,19 +254,18 @@ const catalog = new Catalog();
 
 // Основной код: получаем товары и сохраняем в модель
 async function initApp() {
-  try {
-    // 1. Отправляем GET‑запрос на /product/
-    const response: ProductsResponse = await productService.getProducts();
-    
-    // 2. Сохраняем массив товаров в модель каталога
-    catalog.setItems(response.items);
-    
-    // 3. Выводим каталог в консоль для проверки
-    console.log('Каталог товаров:', catalog.getItems());
-    
-  } catch (error) {
-    console.error('Ошибка при загрузке товаров:', error);
-  }
+    try {
+        // GET‑запрос на /product/
+        const response: ProductsResponse = await productService.getProducts();
+
+        // Сохраняем массив товаров в модель каталога
+        catalog.setItems(response.items);
+
+        // Выводим каталог в консоль
+        console.log("Каталог товаров:", catalog.getItems());
+    } catch (error) {
+        console.error("Ошибка при загрузке товаров:", error);
+    }
 }
 
 // Запуск приложения
