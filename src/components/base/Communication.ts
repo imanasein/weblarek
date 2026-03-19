@@ -6,7 +6,6 @@ export class Communication {
     constructor(api: IApi) {
         this.api = api;
     }
-
     /**
      * Получает список товаров с сервера
      * @returns Объект с общим количеством товаров и массивом продуктов
@@ -14,7 +13,6 @@ export class Communication {
     async getProducts(): Promise<ProductsResponse> {
         return this.api.get<ProductsResponse>("/product/");
     }
-
     /**
      * Отправляет заказ на сервер
      * @param orderData Данные заказа (покупатель IBuyer + список ID товаров + итоговая сумма)
