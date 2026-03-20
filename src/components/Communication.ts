@@ -1,4 +1,4 @@
-import { IApi, ProductsResponse, OrderData, OrderResponse } from "../../types";
+import { IApi, ProductsResponse, OrderData, OrderResponse } from "../types";
 
 export class Communication {
     private api: IApi;

@@ -1,4 +1,4 @@
-import {IProduct} from "../../../types";
+import {IProduct} from "../../types";
 
 export class Cart {
     private cartList: IProduct[] = [];  // Хранит массив товаров 
@@ -9,27 +9,15 @@ export class Cart {
     }
 
     addItem(product: IProduct): void {
-        // Проверка на отсутствия ID товара
-        if (!product.id) {
-            throw new Error("Товар должен иметь id");
-        }
-        // Проверка на дубликат
-        const existingItem = this.cartList.find(item => item.id === product.id);
-        if (existingItem) {
-            // Если дубликат товара найден
-            throw new Error("Товар уже есть в карзине");
-        } else {
+        // Добавляет товар в массив 
             this.cartList.push(product);
         }
-    }
 
     removeItem(product: IProduct): void {
         // Удаляет товар из корзины
         const index = this.cartList.findIndex((item) => item.id === product.id);
-        if (index !== -1) {         // если найденный индекс не последний 
+        if (index !== -1) {
             this.cartList.splice(index, 1);
-        } else {                    // А если последний, очищаем массив
-            this.cartList = [];
         }
     }
 
@@ -42,7 +30,6 @@ export class Cart {
         // Получает общую стоимость всех товаров в корзине
         return this.cartList.reduce((total, item) => {
             if (typeof item.price !== 'number') {
-                console.warn(`Цена товара ${item.id} бесценна!`);
                 return total + 0;       // В случае бесценного товара, считаем её равной нулю
             }
             return total + item.price;

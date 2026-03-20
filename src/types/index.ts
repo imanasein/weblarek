@@ -18,6 +18,9 @@ export interface IProduct {
 // класс типа оплаты
 export type TPayment = "card" | "cash" | "";
 
+// класс обекта сообщений об ошибках при заполнении данных пользоавтеля 
+export type TBuyerErrors = Partial<Record<keyof IBuyer, string>>;
+
 // интерфейс данных о покупателе
 export interface IBuyer {
     payment: TPayment;
