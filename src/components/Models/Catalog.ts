@@ -5,18 +5,19 @@ export class Catalog {
 
     private selectedProduct: IProduct | null = null;
 
-    constructor(initialProducts: IProduct[] = []) {
-        this.productCatalog = initialProducts;
+    // сеттер
+    set products(productsList: IProduct[]) {
+        this.productCatalog = productsList;
     }
 
-    // геттер 
+    // геттер
     get products(): IProduct[] {
         // Возвращает массив всех товаров
         return this.productCatalog;
     }
 
     getItem(id: string): IProduct | null {
-    // Ищем товар с указанным id
+        // Ищем товар с указанным id
         const product = this.productCatalog.find((item) => item.id === id);
         // Возвращаем найденный товар или null, если не найден
         return product || null;

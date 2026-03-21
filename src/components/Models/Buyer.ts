@@ -6,7 +6,7 @@ export class Buyer {
     private buyerPhone: string = "";
     private buyerAddress: string = "";
 
-    constructor() {} // Оставим пыстым конструктор класса
+    constructor() {} // Оставим пыстым конструктор класса для следующего спринта
 
     updateBuyerData(data: Partial<IBuyer>): void {
         // Метод добавления данных покупателя, реализован отдельно по полям
