@@ -15,10 +15,10 @@ export interface IProduct {
     price: number | null;
 }
 
-// класс типа оплаты
+// типа оплаты покупателем
 export type TPayment = "card" | "cash" | "";
 
-// класс обекта сообщений об ошибках при заполнении данных пользоавтеля 
+// тип обекта сообщений об ошибках при заполнении данных пользоавтеля 
 export type TBuyerErrors = Partial<Record<keyof IBuyer, string>>;
 
 // интерфейс данных о покупателе
@@ -29,7 +29,7 @@ export interface IBuyer {
     address: string;
 }
 
-// ответ от энпоинта /product/ с сервера с массивом товаров
+// тип ответа от энпоинта /product/ с сервера с массивом товаров
 export interface ProductsResponse {
     total: number;
     items: IProduct[];
@@ -41,7 +41,7 @@ export interface OrderData extends IBuyer {
     items: string[]; // массив ID товаров
 }
 
-// ответ сервера после создания заказа
+// тип ответа сервера после создания заказа
 export interface OrderResponse {
     id: string;
     total: number;
