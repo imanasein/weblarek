@@ -2,44 +2,31 @@ import {ensureElement} from "../../../utils/utils";
 import {Component} from "../../base/Components";
 import {IEvents} from "../../base/Events";
 
-export abstract class Form<T> extends Component<T> {
+export interface IForm {
+    errors: string;
+}
+
+export abstract class Form<T> extends Component<T & IForm> {  //Уточнить про оператор & нужен ли или оставить IForm
     
-    protected formElement: HTMLFormElement;
     protected submitButton: HTMLButtonElement;
     protected errorElement: HTMLElement;
-    protected events: IEvents;
 
-    constructor(container: HTMLFormElement, events: IEvents) {
+    constructor(container: HTMLFormElement, protected events: IEvents) {
         super(container);
         this.events = events;
-        this.formElement = container;
-        this.submitButton = ensureElement<HTMLButtonElement>('button[type="submit"]', this.container);
-        this.errorElement = ensureElement<HTMLElement>('form__errors', this.container);
-        this.formElement.addEventListener('submit', (event)=> {
+        this.errorElement = ensureElement<HTMLElement>(".form__errors", this.container);
+        this.submitButton = ensureElement<HTMLButtonElement>("button[type=submit]", this.container);
+        this.submitButton.addEventListener("submit", (event)=> {
             event.preventDefault();
-            if (this.validate()) {
-                this.onSubmit()// или this.events.emit() ???
-            }
-        });
-        this.formElement.addEventListener('input', () => {
-            // логика валидации и обновления состояния кнопки
-            this.onInput();
+            this.events.emit(`${(this.container as HTMLInputElement).name}: submit`);
         });
     }
-    // переключатель класса: 
-    protected toggleClass(element: HTMLElement, className: string, boolenValue?: boolean) {
-        return element.classList.toggle(className, boolenValue);
+
+    set errors(value: string) {
+        this.errorElement.textContent = value;
     }
 
-    protected validate(): boolean {
-        return true;
-    }
-
-    protected onSubmit(): void {
-        // логика при нажатии кнопки submit - реазизация предусмотрена в дочерних классах
-    }
-
-    protected onInput(): void {
-        // логика при заполнении Input - реазизация предусмотрена в дочерних классах
+    set valid(value: boolean) {
+        this.submitButton.disabled = !value;    // Если valid = false, кнопка блокируется; если valid = true — разблокируется.
     }
 }

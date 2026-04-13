@@ -1,29 +1,103 @@
 import "./scss/styles.scss";
-import {ProductsResponse, OrderData, OrderResponse} from "./types";
 import {Api} from "./components/base/Api";
 import {Catalog} from "./components/Models/Catalog";
 import {Cart} from "./components/Models/Cart";
 import {Buyer} from "./components/Models/Buyer";
 import {Communication} from "./components/Communication";
 import {API_URL} from "./utils/constants";
-import {apiProducts} from "./utils/data";
+import {EventEmitter} from "./components/base/Events";
+import {cloneTemplate, ensureElement} from "./utils/utils";
 import {Header} from "./components/View/Header";
 import {Gallery} from "./components/View/Gallery";
 import {Modal} from "./components/View/Modal";
 import {CardGallery} from "./components/View/CardGallery";
 import {CardPreview} from "./components/View/CardPreview";
-import {cloneTemplate, ensureElement} from "./utils/utils";
-import {IProduct} from "./types";
-import {ICardActions} from "./components/View/base/Card";
-import {EventEmitter} from "./components/base/Events";
+import {CardBasket} from "./components/View/CardBasket";
+import {Success} from "./components/View/Success";
+import {Basket} from "./components/View/Basket";
+import {FormOrder} from "./components/View/FormOrder";
+import {FormContacts} from "./components/View/FormContacts";
+import {ProductsResponse, OrderData, OrderResponse, IProduct} from "./types";
 
-// Создаём экземпляры всех классов, которые не зависят от DOM
-const productList = new Catalog();
-const cart = new Cart();
-const buyer = new Buyer();
+// Сохраняем все шаблоны и контейреры элементов для передачи в слой отображения
+const headerContainer = ensureElement<HTMLElement>(".header");
+const galleryContainer = ensureElement<HTMLElement>(".gallery");
+const modallContainer = ensureElement<HTMLElement>("#modal-container");
+const pageWrapper = ensureElement<HTMLElement>(".page__wrapper");
+
+const successContainer = cloneTemplate<HTMLDivElement>("#success");
+const cardCatalogContainer = cloneTemplate<HTMLButtonElement>("#card-catalog");
+const cardPreviewContainer = cloneTemplate<HTMLDivElement>("#card-preview");
+const cardBasketContainer = cloneTemplate<HTMLLIElement>("#card-basket");
+const basketContainer = cloneTemplate<HTMLDivElement>("#basket");
+const formOrderContainer = cloneTemplate<HTMLFormElement>("#order");
+const formContactsContainer = cloneTemplate<HTMLFormElement>("#contacts");
+
+// Создаём экземпляр класса брокера событий
+const events = new EventEmitter();
+
+// Создаём экземпляры классов слоя отображения
+const header = new Header(headerContainer, events);
+const gallery = new Gallery(galleryContainer);
+const modal = new Modal(modallContainer, events);
+const success = new Success(successContainer, events);
+const basket = new Basket(basketContainer, events);
+const formOrder = new FormOrder(formOrderContainer, events);
+const formContacts = new FormContacts(formContactsContainer, events);
+const cardModalview = new CardPreview(cardPreviewContainer, events);
+
+// Создаём экземпляры всех классов модели данных
+const productList = new Catalog(events);
+const cart = new Cart(events);
+const buyer = new Buyer(events);
+
+// Создаём экземпляр класса коммуникации
 const api = new Api(API_URL);
 const productService = new Communication(api);
-const events = new EventEmitter();
+
+// Делее через брокер событий подписываемся на события:
+
+// Событие: загрузка каталога
+events.on("catalog:uploaded", () => {
+    const products = productList.products;
+    const galleryCards = products.map((product) => {
+        const card = new CardGallery(cardCatalogContainer, events);
+        return card.render(product);
+    });
+    gallery.catalog = galleryCards;
+});
+
+// Событие: корзина открыть
+events.on("basket:open", () => {
+    modal.content = basket.render();
+});
+
+// Событие: товар выбран
+events.on("catalog:poduct_selected", () => {
+    const selectedProduct = productList.getSelectedItem();
+    if (selectedProduct) {
+        const isInCart = cart.isItemInCart(selectedProduct.id); // проверяем есть ли продукт в корзине(boolean)
+        cardModalview.isInBasket = isInCart; // меняем надпись на кнопке: Купить или Удалить
+        if (selectedProduct.price === null) {
+            // если нет цены
+            cardModalview.buttonStatus = false; // кнопка не активна, надпись "Недоступно"
+        } else {
+            cardModalview.buttonStatus = true;
+        }
+        modal.content = cardModalview.render(selectedProduct);
+    }
+});
+
+// Событие: товар купить
+events.on("product:buy", () => {
+    const productToBuy = productList.getSelectedItem();
+    if (productToBuy) {
+        const isProductInCart = cart.isItemInCart(productToBuy.id)
+    }
+    
+
+})
+
 
 // // 1. Тестирование класса Catalog
 // console.log("*Тестирование класса Catalog*");

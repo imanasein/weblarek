@@ -1,62 +1,64 @@
-import { IProduct } from "../../types";
-import { ensureElement } from "../../utils/utils";
-import { Card, ICard } from "./base/Card"
-import { IEvents } from "../base/Events";
+import {ensureElement} from "../../utils/utils";
+import {Card} from "./base/Card";
+import {IEvents} from "../base/Events";
+import {categoryMap} from "../../utils/constants";
+import {CDN_URL} from "../../utils/constants";
 
-export interface ICardPreview extends ICard { // Дописать интерфейс !!!
-  isInBasket: boolean;
+type CategoryKey = keyof typeof categoryMap;
+
+export interface ICardPreview {
+    category: CategoryKey;
+    image: string;
+    description: string;
 }
 
-export class CardPreview extends Card<IProduct> {
-  private isInBasket: boolean;   // Значение по умолчанию false - в корзине нет товаров
-  private buyButton: HTMLButtonElement;
+export class CardPreview extends Card<ICardPreview> {
+    protected categoryElement: HTMLElement;
+    protected imageElement: HTMLImageElement;
+    protected descriptionElement: HTMLElement;
+    private buyButton: HTMLButtonElement;
 
-  constructor(container: HTMLElement, events: IEvents, isInBasket: boolean = false) {
-    super(container, events);
-    this.isInBasket = isInBasket;
-    this.buyButton = ensureElement<HTMLButtonElement>('.card__button', this.container);
-    this.setupEventListeners();
-    this.toggleBuyButton();
-  }
+    constructor(container: HTMLElement, protected events: IEvents) {
+        super(container);
+        this.events = events;
+        this.categoryElement = ensureElement<HTMLElement>(".card__category", this.container);
+        this.imageElement = ensureElement<HTMLImageElement>(".card__image", this.container);
+        this.descriptionElement = ensureElement<HTMLElement>(".card__description", this.container);
+        this.buyButton = ensureElement<HTMLButtonElement>(".card__buy-button", this.container);
 
-  private setupEventListeners(): void {
-    this.buyButton.addEventListener('click', () => {
-      if (this.isInBasket) {
-        this.events.emit('card:remove-from-basket', {
-          productId: this.product.id,
-          type: 'preview'
+        this.buyButton.addEventListener("click", () => {
+            this.events.emit("product:buy", this.container);
         });
-      } else {
-        this.events.emit('card:add-to-basket', {
-          product: this.product,
-          type: 'preview'
+    }
+
+    set category(value: CategoryKey) {
+        this.categoryElement.textContent = value;
+        // Очищаем все классы категорий перед установкой новых
+        Object.values(categoryMap).forEach((className) => {
+            this.categoryElement.classList.remove(className);
         });
-      }
-    });
-  }
-
-  setIsInBasket(value: boolean): void {
-    this.isInBasket = value;
-    this.toggleBuyButton();
-  }
-
-  private toggleBuyButton(): void {
-    if (!this.product.price) {
-      this.buyButton.disabled = true;
-      this.buyButton.textContent = 'Недоступно';
-    } else {
-      this.buyButton.disabled = false;
-      this.buyButton.textContent = this.isInBasket ? 'Удалить из корзины' : 'Купить';
+        // Безопасная индексация с проверкой
+        if (value in categoryMap) {
+            const className = categoryMap[value];
+            this.categoryElement.classList.add(className);
+        }
     }
-  }
 
-  render(data?: IProduct): HTMLElement {
-    if (data) {
-      this.cardData = data;
-      this.toggleBuyButton();
-    } else {
-      this.toggleBuyButton(); // Обновляем состояние кнопки
+    set image(value: string) {
+        this.setImage(this.imageElement, CDN_URL + value);
     }
-    return this.container;
-  }
+
+    set description(value: string) {
+        this.descriptionElement.textContent = value;
+    }
+
+    set buttonStatus(value: boolean) {
+        // кнопка включается/отключается в зависимости от value
+        this.buyButton.disabled = !value;
+        this.buyButton.textContent = "Недоступно"
+    }
+
+    set isInBasket(value: boolean) {
+        this.buyButton.textContent = value ? "Удалить из корзины" : "Купить";
+    }
 }

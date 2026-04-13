@@ -1,4 +1,5 @@
 import {IBuyer, TPayment, TBuyerErrors} from "../../types";
+import {IEvents} from "../base/Events";
 
 export class Buyer {
     private buyerPayment: TPayment = "";
@@ -6,7 +7,7 @@ export class Buyer {
     private buyerPhone: string = "";
     private buyerAddress: string = "";
 
-    constructor() {} // Оставим пыстым конструктор класса для следующего спринта
+    constructor(protected events: IEvents) {}
 
     updateBuyerData(data: Partial<IBuyer>): void {
         // Метод добавления данных покупателя, реализован отдельно по полям
@@ -14,6 +15,7 @@ export class Buyer {
         if (data.email !== undefined) this.buyerEmail = data.email;
         if (data.phone !== undefined) this.buyerPhone = data.phone;
         if (data.address !== undefined) this.buyerAddress = data.address;
+        this.events.emit("buyer:chenged"); // Уточнить нужен ли контекст или данные ???
     }
 
     getBuyer(): IBuyer {
@@ -32,6 +34,7 @@ export class Buyer {
         this.buyerEmail = "";
         this.buyerPhone = "";
         this.buyerAddress = "";
+        this.events.emit("buyer:cleared");
     }
 
     validate(): TBuyerErrors {

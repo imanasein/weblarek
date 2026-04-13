@@ -4,47 +4,45 @@ import {IEvents} from "../base/Events";
 
 export interface IBasket {
     orderPrice: number;
-    isEmpty: boolean;
-    toggleOrderButton: void;
+    basketList: HTMLElement[];
 }
 
 export class Basket extends Component<IBasket> {
-
-    private isBasketEmpty: boolean;
-    protected basketList: HTMLElement;
+    protected basketListElement: HTMLElement;
     protected orderButton: HTMLButtonElement;
     protected totalPrice: HTMLElement;
-    protected events: IEvents;
 
-    constructor(container: HTMLElement, events: IEvents) {
-
+    constructor(container: HTMLElement, protected events: IEvents) {
         super(container);
-        this.isBasketEmpty = true;  // Значение по умолчанию "true" - корзина пуста!
-        this.basketList = ensureElement<HTMLElement>('.basket__list', this.container);
-        this.orderButton = ensureElement<HTMLButtonElement>('.basket__button', this.container);
-        this.totalPrice = ensureElement<HTMLElement>('.basket__price', this.container);
-        this.events = events;
+        this.basketListElement = ensureElement<HTMLElement>(".basket__list", this.container);
+        this.totalPrice = ensureElement<HTMLElement>(".basket__price", this.container);
+        this.orderButton = ensureElement<HTMLButtonElement>(".basket__button", this.container);
         this.orderButton.addEventListener("click", () => {
             this.events.emit("busket:order");
         });
-        this.toggleOrderButton();
     }
 
     set orderPrice(value: number) {
         this.totalPrice.textContent = `${value} синапсов`;
     }
 
-    set isEmpty(value: boolean) {
-        this.isBasketEmpty = value;
+    set basketList(items: HTMLElement[]) {
+        this.basketListElement.replaceChildren(...items);
+        this.isBasketEmpty(); // проверяем сразу пустая ли корзина
+        this.events.emit("busket:added");
     }
 
-    private toggleOrderButton(): void {
-        if(this.isBasketEmpty) {
-            this.orderButton.disabled = true;
+    protected isBasketEmpty(): boolean {
+        const isEmty = this.basketListElement.children.length === 0; // проверяем есть ли товары в корзине
+        if (isEmty) {
             this.orderPrice = 0;
-            const noItems: HTMLElement = createElement<HTMLElement>('span');
+            this.orderButton.disabled = true;
+            const noItems: HTMLElement = createElement<HTMLElement>("span");
             noItems.textContent = "Корзина пуста"; // проверить нужны ли стили(какой нибудь класс)
-            this.basketList.appendChild(noItems);
+            this.basketListElement.replaceChildren(noItems);
+        } else {
+            this.orderButton.disabled = false;
         }
+        return isEmty;
     }
 }
