@@ -36,7 +36,7 @@ export class FormOrder extends Form<IFormOrder> {
         });
     }
 
-    // Сеттеры для установки состояния кнопки из модели данных
+    // Сеттеры для установки состояния кнопки
     set buttonStatus(value: TPayment) {
         this.buttonCard.classList.toggle("button_alt-active", value === "card");
         this.buttonCash.classList.toggle("button_alt-active", value === "cash");

@@ -81,18 +81,18 @@ events.on("catalog:changed", () => {
     gallery.catalog = galleryCards;
 });
 
-// Событие: карточка товара выбрана (отображение - карточка товара галереи)
+// Событие: карточка товара выбрана (представление - карточка товара галереи)
 events.on("galleryCard:selected", (product: IProduct) => {
     productList.setSelectedItem(product);
 });
 
-// Событие: открыть карзину (отображение - клик по рисунку карзины в header)
+// Событие: открыть карзину (представление - клик по рисунку карзины в header)
 events.on("basket:open", () => {
     modal.content = basket.render();
     modal.show();
 });
 
-//Событие: товар выбран для детального отображения (модель данных- выбранный товар изменился)
+// Событие: товар выбран для детального отображения (модель данных- выбранный товар изменился)
 events.on("catalog:product_selected", () => {
     const selectedProduct = productList.getSelectedItem();
     if (selectedProduct) {
@@ -109,7 +109,7 @@ events.on("catalog:product_selected", () => {
     }
 });
 
-// Событие: товар купить/удалить (отображение - кнопка товара превью купить/удалить)
+// Событие: товар купить/удалить (представление - кнопка товара превью купить/удалить)
 events.on("product:to_cart", () => {
     const selectedProduct = productList.getSelectedItem();
     if (!selectedProduct) {
@@ -124,7 +124,7 @@ events.on("product:to_cart", () => {
     modal.hide();
 });
 
-// Событие товар: удалить (отображение - карточка в карзине)
+// Событие товар: удалить (представление - карточка в карзине)
 events.on("product:delete", (product: IProduct) => {
     if (product) {
         cart.removeItem(product);
@@ -159,42 +159,42 @@ events.on("basket:changed", () => {
     } else {
         basket.buttonStatus = false;
     }
-    console.log("Отображение - карзина изменилась!");
 });
-// Событие: модальное окно: закрыть (отображение - клик по кнопке/клик вне окна)
+
+// Событие: модальное окно: закрыть (представление - клик по кнопке/клик вне окна)
 events.on("modal:close", () => {
     modal.hide();
 });
 
-// Событие: карзина: заказать (отображение - клик  по кнопке в карзине Заказать)
+// Событие: карзина: заказать (представление - клик  по кнопке в карзине Заказать)
 events.on("basket:order", () => {
     modal.content = formOrder.render();
     modal.show();
 });
 
-// Событие: конпка "Оплата онлайн" нажата (отображение - форма Order)
+// Событие: конпка "Оплата онлайн" нажата (представление - форма Order)
 events.on("payment_card:selected", () => {
     formOrder.buttonStatus = "card";
     buyer.updateBuyerData({payment: "card"});
 });
 
-// Событие: конпка "Оплата наличными" нажата (отображение - форма Order)
+// Событие: конпка "Оплата наличными" нажата (представление - форма Order)
 events.on("payment_cash:selected", () => {
     formOrder.buttonStatus = "cash";
     buyer.updateBuyerData({payment: "cash"});
 });
 
-// Событие: данные адреса изменены (отображение - поле адреса формы Order)
+// Событие: данные адреса изменены (представление - поле адреса формы Order)
 events.on("address:changed", (data: {address: string}) => {
     buyer.updateBuyerData({address: data.address});
 });
 
-// Событие: данные email изменены (отображение - поле адреса формы Contacts)
+// Событие: данные email изменены (представление - поле адреса формы Contacts)
 events.on("email:changed", (data: {email: string}) => {
     buyer.updateBuyerData({email: data.email});
 });
 
-// Событие: данные телефона изменены (отображение - поле адреса формы Contacts)
+// Событие: данные телефона изменены (представление - поле адреса формы Contacts)
 events.on("phone:changed", (data: {phone: string}) => {
     buyer.updateBuyerData({phone: data.phone});
 });
@@ -229,13 +229,13 @@ events.on("buyer:changed", () => {
     }
 });
 
-// Событие нажатие кнопки Далее (отображение - кнопка submit формы Order)
+// Событие нажатие кнопки Далее (представление - кнопка submit формы Order)
 events.on("order:submit", () => {
     modal.content = formContacts.render();
     modal.show();
 });
 
-// Событие нажатие кнопки Оплатить (отображение - кнопка submit формы Contacts)
+// Событие нажатие кнопки Оплатить (представление - кнопка submit формы Contacts)
 events.on("contacts:submit", async () => {
     const customer: IBuyer = buyer.getBuyer();
     const orderTotalPrice: number = cart.getTotalPrice();
@@ -262,7 +262,7 @@ events.on("contacts:submit", async () => {
     }
 });
 
-// Событие: Успешно: закрыть (отображение - Модальное окно Успешно - кнопка)
+// Событие: Успешно закрыть (представление - Модальное окно Успешно - кнопка)
 events.on("success:close", () => {
     success.totalPrice = 0;
     modal.hide();
