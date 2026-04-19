@@ -1,8 +1,7 @@
 import {IProduct} from "../../types";
-import { IEvents } from "../base/Events";
+import {IEvents} from "../base/Events";
 
 export class Catalog {
-    
     private productCatalog: IProduct[] = [];
     private selectedProduct: IProduct | null = null;
 
@@ -13,7 +12,7 @@ export class Catalog {
     // сеттер
     set products(productsList: IProduct[]) {
         this.productCatalog = productsList;
-        this.events.emit("catalog:uploaded", this.productCatalog);
+        this.events.emit("catalog:changed");
     }
 
     // геттер
@@ -32,7 +31,7 @@ export class Catalog {
     setSelectedItem(product: IProduct): void {
         // Сохраняет товар для подробного отображения
         this.selectedProduct = product;
-        this.events.emit("catalog:poduct_selected", this.selectedProduct);
+        this.events.emit("catalog:product_selected");
     }
 
     getSelectedItem(): IProduct | null {

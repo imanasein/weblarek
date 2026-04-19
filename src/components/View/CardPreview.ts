@@ -23,21 +23,19 @@ export class CardPreview extends Card<ICardPreview> {
         this.events = events;
         this.categoryElement = ensureElement<HTMLElement>(".card__category", this.container);
         this.imageElement = ensureElement<HTMLImageElement>(".card__image", this.container);
-        this.descriptionElement = ensureElement<HTMLElement>(".card__description", this.container);
-        this.buyButton = ensureElement<HTMLButtonElement>(".card__buy-button", this.container);
+        this.descriptionElement = ensureElement<HTMLElement>(".card__text", this.container);
+        this.buyButton = ensureElement<HTMLButtonElement>(".card__button", this.container);
 
         this.buyButton.addEventListener("click", () => {
-            this.events.emit("product:buy", this.container);
+            this.events.emit("product:to_cart");
         });
     }
 
     set category(value: CategoryKey) {
         this.categoryElement.textContent = value;
-        // Очищаем все классы категорий перед установкой новых
         Object.values(categoryMap).forEach((className) => {
             this.categoryElement.classList.remove(className);
         });
-        // Безопасная индексация с проверкой
         if (value in categoryMap) {
             const className = categoryMap[value];
             this.categoryElement.classList.add(className);
@@ -52,13 +50,11 @@ export class CardPreview extends Card<ICardPreview> {
         this.descriptionElement.textContent = value;
     }
 
-    set buttonStatus(value: boolean) {
-        // кнопка включается/отключается в зависимости от value
-        this.buyButton.disabled = !value;
-        this.buyButton.textContent = "Недоступно"
+    set buttonText(value: string) {
+        this.buyButton.textContent = value;
     }
 
-    set isInBasket(value: boolean) {
-        this.buyButton.textContent = value ? "Удалить из корзины" : "Купить";
+    set buttonStatus(value: boolean) {
+        this.buyButton.disabled = value;
     }
 }

@@ -7,7 +7,6 @@ export interface ICard {
 }
 
 export abstract class Card<T> extends Component<ICard> {
-    // Оператор -& пересечение типов T и ICard
     protected titleElement: HTMLElement;
     protected priceElement: HTMLElement;
 

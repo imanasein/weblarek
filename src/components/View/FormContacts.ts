@@ -14,14 +14,14 @@ export class FormContacts extends Form<IFormContacts> {
     constructor(container: HTMLFormElement, protected events: IEvents) {
         super(container, events);
         this.emailInput = ensureElement<HTMLInputElement>(".form__input[name=email]", this.container);
-        this.phoneInput = ensureElement<HTMLInputElement>(".form__input[name=phone]", this.container); // События!!!
-    }
+        this.phoneInput = ensureElement<HTMLInputElement>(".form__input[name=phone]", this.container);
 
-    set email(value: string) {
-        this.emailInput.value = value;
-    }
+        this.emailInput.addEventListener("input", () => {
+            this.events.emit("email:changed", {email: this.emailInput.value});
+        });
 
-    set phone(value: string) {
-        this.phoneInput.value = value;
+        this.phoneInput.addEventListener("input", () => {
+            this.events.emit("phone:changed", {phone: this.phoneInput.value});
+        });
     }
 }

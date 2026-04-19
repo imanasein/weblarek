@@ -18,12 +18,16 @@ export class Modal extends Component<IModal> {
         this.closeButton.addEventListener("click", () => {
             this.events.emit("modal:close");
         });
+        // Закрытие по клику вне модального окна
+        this.container.addEventListener("click", (event) => {
+            if (event.target === this.container) {
+                this.events.emit("modal:close");
+            }
+        });
     }
 
     set content(item: HTMLElement) {
-        // Уточнить нужна ли очистка содержимого перед загрузкой
         this.contentElement.replaceChildren(item);
-        this.show(); // при добавлении сразу отрываем модальное окно
     }
 
     show(): void {
@@ -33,6 +37,5 @@ export class Modal extends Component<IModal> {
 
     hide(): void {
         this.container.classList.remove("modal_active");
-        this.events.emit("modal:close");
     }
 }

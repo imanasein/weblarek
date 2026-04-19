@@ -17,4 +17,3 @@ export class Gallery extends Component<IGallery> {
         this.catalogElement.replaceChildren(...items);
     }
 }
-// Уточнить нужен ли метод очистки Галереи ???

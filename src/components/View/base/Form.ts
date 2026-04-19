@@ -4,10 +4,12 @@ import {IEvents} from "../../base/Events";
 
 export interface IForm {
     errors: string;
+    valid: boolean;
 }
 
-export abstract class Form<T> extends Component<T & IForm> {  //Уточнить про оператор & нужен ли или оставить IForm
-    
+export abstract class Form<T> extends Component<IForm> {
+    //Уточнить про оператор & нужен ли или оставить IForm
+
     protected submitButton: HTMLButtonElement;
     protected errorElement: HTMLElement;
 
@@ -16,9 +18,9 @@ export abstract class Form<T> extends Component<T & IForm> {  //Уточнить
         this.events = events;
         this.errorElement = ensureElement<HTMLElement>(".form__errors", this.container);
         this.submitButton = ensureElement<HTMLButtonElement>("button[type=submit]", this.container);
-        this.submitButton.addEventListener("submit", (event)=> {
+        this.submitButton.addEventListener("click", (event) => {
             event.preventDefault();
-            this.events.emit(`${(this.container as HTMLInputElement).name}: submit`);
+            this.events.emit(`${(this.container as HTMLInputElement).name}:submit`);
         });
     }
 
@@ -27,6 +29,6 @@ export abstract class Form<T> extends Component<T & IForm> {  //Уточнить
     }
 
     set valid(value: boolean) {
-        this.submitButton.disabled = !value;    // Если valid = false, кнопка блокируется; если valid = true — разблокируется.
+        this.submitButton.disabled = !value; // Если valid = false, кнопка блокируется; если valid = true — разблокируется.
     }
 }

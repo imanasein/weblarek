@@ -1,10 +1,12 @@
 import {Component} from "../base/Components";
-import {createElement, ensureElement} from "../../utils/utils";
+import {ensureElement} from "../../utils/utils";
 import {IEvents} from "../base/Events";
 
 export interface IBasket {
     orderPrice: number;
     basketList: HTMLElement[];
+    buttonText: string;
+    buttonStatus: boolean;
 }
 
 export class Basket extends Component<IBasket> {
@@ -18,7 +20,7 @@ export class Basket extends Component<IBasket> {
         this.totalPrice = ensureElement<HTMLElement>(".basket__price", this.container);
         this.orderButton = ensureElement<HTMLButtonElement>(".basket__button", this.container);
         this.orderButton.addEventListener("click", () => {
-            this.events.emit("busket:order");
+            this.events.emit("basket:order");
         });
     }
 
@@ -27,22 +29,13 @@ export class Basket extends Component<IBasket> {
     }
 
     set basketList(items: HTMLElement[]) {
-        this.basketListElement.replaceChildren(...items);
-        this.isBasketEmpty(); // проверяем сразу пустая ли корзина
-        this.events.emit("busket:added");
-    }
-
-    protected isBasketEmpty(): boolean {
-        const isEmty = this.basketListElement.children.length === 0; // проверяем есть ли товары в корзине
-        if (isEmty) {
-            this.orderPrice = 0;
-            this.orderButton.disabled = true;
-            const noItems: HTMLElement = createElement<HTMLElement>("span");
-            noItems.textContent = "Корзина пуста"; // проверить нужны ли стили(какой нибудь класс)
-            this.basketListElement.replaceChildren(noItems);
-        } else {
-            this.orderButton.disabled = false;
+        if (!items) {
+            this.basketListElement.replaceChildren();
+            return;
         }
-        return isEmty;
+        this.basketListElement.replaceChildren(...items);
+    }
+    set buttonStatus(value: boolean) {
+        this.orderButton.disabled = value;
     }
 }

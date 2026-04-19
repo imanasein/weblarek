@@ -18,7 +18,7 @@ export interface IProduct {
 // типа оплаты покупателем
 export type TPayment = "card" | "cash" | "";
 
-// тип обекта сообщений об ошибках при заполнении данных пользоавтеля 
+// тип обекта сообщений об ошибках при заполнении данных пользоавтеля
 export type TBuyerErrors = Partial<Record<keyof IBuyer, string>>;
 
 // интерфейс данных о покупателе
@@ -45,4 +45,9 @@ export interface OrderData extends IBuyer {
 export interface OrderResponse {
     id: string;
     total: number;
+}
+
+// Интерфейс для передачи обработчика событий (передавать данные разных карточек)
+export interface ICardAction {
+    onClick: () => void;
 }

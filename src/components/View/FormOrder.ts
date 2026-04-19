@@ -5,38 +5,40 @@ import {Form} from "./base/Form";
 
 export interface IFormOrder {
     payment: TPayment;
-    adress: string;
+    address: string;
 }
 
 export class FormOrder extends Form<IFormOrder> {
     protected buttonCard: HTMLButtonElement;
     protected buttonCash: HTMLButtonElement;
-    protected adressInput: HTMLInputElement;
+    protected addressInput: HTMLInputElement;
 
     constructor(container: HTMLFormElement, protected events: IEvents) {
         super(container, events);
         this.buttonCard = ensureElement<HTMLButtonElement>(".button_alt[name=card]", this.container);
         this.buttonCash = ensureElement<HTMLButtonElement>(".button_alt[name=cash]", this.container);
-        this.adressInput = ensureElement<HTMLInputElement>(".form__input[name=address]", this.container);
-        this.adressInput.addEventListener("click", () => {
-            this.events.emit("input:address", {value: this.adressInput.value});
-        });
+        this.addressInput = ensureElement<HTMLInputElement>(".form__input[name=address]", this.container);
+
         this.buttonCard.addEventListener("click", () => {
-            this.events.emit("payment:card");
+            this.events.emit("payment_card:selected");
             this.buttonCard.classList.add("button_alt-active");
+            this.buttonCash.classList.remove("button_alt-active");
         });
+
         this.buttonCash.addEventListener("click", () => {
-            this.events.emit("payment:cash");
+            this.events.emit("payment_cash:selected");
             this.buttonCash.classList.add("button_alt-active");
+            this.buttonCard.classList.remove("button_alt-active");
+        });
+
+        this.addressInput.addEventListener("input", () => {
+            this.events.emit("address:changed", {address: this.addressInput.value});
         });
     }
 
-    set payment(value: TPayment) {
+    // Сеттеры для установки состояния кнопки из модели данных
+    set buttonStatus(value: TPayment) {
         this.buttonCard.classList.toggle("button_alt-active", value === "card");
         this.buttonCash.classList.toggle("button_alt-active", value === "cash");
-    }
-
-    set address(value: string) {
-        this.adressInput.value = value;
     }
 }

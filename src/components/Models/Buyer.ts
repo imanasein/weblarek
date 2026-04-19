@@ -15,7 +15,7 @@ export class Buyer {
         if (data.email !== undefined) this.buyerEmail = data.email;
         if (data.phone !== undefined) this.buyerPhone = data.phone;
         if (data.address !== undefined) this.buyerAddress = data.address;
-        this.events.emit("buyer:chenged"); // Уточнить нужен ли контекст или данные ???
+        this.events.emit("buyer:changed");
     }
 
     getBuyer(): IBuyer {
@@ -34,7 +34,7 @@ export class Buyer {
         this.buyerEmail = "";
         this.buyerPhone = "";
         this.buyerAddress = "";
-        this.events.emit("buyer:cleared");
+        this.events.emit("buyer:changed");
     }
 
     validate(): TBuyerErrors {
