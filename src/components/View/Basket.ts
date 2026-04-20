@@ -29,12 +29,9 @@ export class Basket extends Component<IBasket> {
     }
 
     set basketList(items: HTMLElement[]) {
-        if (!items) {
-            this.basketListElement.replaceChildren();
-            return;
-        }
         this.basketListElement.replaceChildren(...items);
     }
+    
     set buttonStatus(value: boolean) {
         this.orderButton.disabled = value;
     }

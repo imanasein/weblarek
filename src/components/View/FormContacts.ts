@@ -24,4 +24,12 @@ export class FormContacts extends Form<IFormContacts> {
             this.events.emit("phone:changed", {phone: this.phoneInput.value});
         });
     }
+
+    set emailInputValue(value: string) {
+        this.emailInput.value = value;
+    }
+
+    set phoneInputValue(value: string) {
+        this.phoneInput.value = value;
+    }
 }

@@ -21,14 +21,10 @@ export class FormOrder extends Form<IFormOrder> {
 
         this.buttonCard.addEventListener("click", () => {
             this.events.emit("payment_card:selected");
-            this.buttonCard.classList.add("button_alt-active");
-            this.buttonCash.classList.remove("button_alt-active");
         });
 
         this.buttonCash.addEventListener("click", () => {
             this.events.emit("payment_cash:selected");
-            this.buttonCash.classList.add("button_alt-active");
-            this.buttonCard.classList.remove("button_alt-active");
         });
 
         this.addressInput.addEventListener("input", () => {
@@ -40,5 +36,10 @@ export class FormOrder extends Form<IFormOrder> {
     set buttonStatus(value: TPayment) {
         this.buttonCard.classList.toggle("button_alt-active", value === "card");
         this.buttonCash.classList.toggle("button_alt-active", value === "cash");
+    }
+
+    // Сеттер для установки значения в поле Инпут адреса
+    set addressInputValue (value: string) {
+        this.addressInput.value = value;
     }
 }

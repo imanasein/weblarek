@@ -153,12 +153,7 @@ events.on("basket:changed", () => {
         });
     }
     basket.basketList = basketCards;
-
-    if (basketCards.length === 0) {
-        basket.buttonStatus = true;
-    } else {
-        basket.buttonStatus = false;
-    }
+    basket.buttonStatus = basketCards.length === 0
 });
 
 // Событие: модальное окно: закрыть (представление - клик по кнопке/клик вне окна)
@@ -174,13 +169,11 @@ events.on("basket:order", () => {
 
 // Событие: конпка "Оплата онлайн" нажата (представление - форма Order)
 events.on("payment_card:selected", () => {
-    formOrder.buttonStatus = "card";
     buyer.updateBuyerData({payment: "card"});
 });
 
 // Событие: конпка "Оплата наличными" нажата (представление - форма Order)
 events.on("payment_cash:selected", () => {
-    formOrder.buttonStatus = "cash";
     buyer.updateBuyerData({payment: "cash"});
 });
 
@@ -201,30 +194,25 @@ events.on("phone:changed", (data: {phone: string}) => {
 
 // Событие: модель данных Buyer изменилась
 events.on("buyer:changed", () => {
-    const errors = buyer.validate(); // Вызываем метод валидации модели Buyer
-    let orderErrors: string = "";
+    
+    const buyerData = buyer.getBuyer();     // Получаем данные из модели
+    formOrder.buttonStatus = buyerData.payment;
+    formOrder.addressInputValue = buyerData.address;
+    formContacts.emailInputValue = buyerData.email;
+    formContacts.phoneInputValue = buyerData.phone;
 
-    if (errors.address && errors.payment) {
-        orderErrors = `${errors.address}; ${errors.payment}`;
-    } else if (errors.address) {
-        orderErrors = `${errors.address}`;
-    } else if (errors.payment) {
-        orderErrors = `${errors.payment}`;
-    }
-    formOrder.errors = orderErrors;
-    if (!errors.address && !errors.payment) {
+    const errors = buyer.validate(); // Вызываем метод валидации модели Buyer
+    const orderErrors = [errors.address, errors.payment].filter(Boolean).join('; ');
+    formOrder.errors = orderErrors; // создали массив, очистили из него пустые и объединили массив в строку
+    
+    if (!orderErrors) {
         formOrder.valid = true;
     }
-    let contactsErrors: string = "";
-    if (errors.email && errors.phone) {
-        contactsErrors = `${errors.email}; ${errors.phone}`;
-    } else if (errors.email) {
-        contactsErrors = `${errors.email}`;
-    } else if (errors.phone) {
-        contactsErrors = `${errors.phone}`;
-    }
+
+    const contactsErrors = [errors.email, errors.phone].filter(Boolean).join('; ');
     formContacts.errors = contactsErrors;
-    if (!errors.email && !errors.phone) {
+    
+    if (!contactsErrors) {
         formContacts.valid = true;
     }
 });
