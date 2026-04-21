@@ -8,7 +8,7 @@ interface IHeader {
 
 export class Header extends Component<IHeader> {
     protected buttonBasket: HTMLButtonElement;
-    protected counterElement!: HTMLElement;
+    protected counterElement: HTMLElement;
     protected events: IEvents;
 
     constructor(container: HTMLElement, events: IEvents) {

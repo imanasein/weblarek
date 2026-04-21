@@ -205,16 +205,12 @@ events.on("buyer:changed", () => {
     const orderErrors = [errors.address, errors.payment].filter(Boolean).join('; ');
     formOrder.errors = orderErrors; // создали массив, очистили из него пустые и объединили массив в строку
     
-    if (!orderErrors) {
-        formOrder.valid = true;
-    }
+    formOrder.valid = !orderErrors  // усли нет ошибок - разблокируем кнопку
 
     const contactsErrors = [errors.email, errors.phone].filter(Boolean).join('; ');
     formContacts.errors = contactsErrors;
     
-    if (!contactsErrors) {
-        formContacts.valid = true;
-    }
+    formContacts.valid = !orderErrors
 });
 
 // Событие нажатие кнопки Далее (представление - кнопка submit формы Order)

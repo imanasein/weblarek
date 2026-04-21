@@ -7,8 +7,8 @@ export interface ICardBasket {
 }
 
 export class CardBasket extends Card<ICardBasket> {
-    private cardIndex: HTMLElement;
-    private deleteButton: HTMLButtonElement;
+    protected cardIndex: HTMLElement;
+    protected deleteButton: HTMLButtonElement;
 
     constructor(container: HTMLElement, protected actions: ICardAction) {
         super(container);

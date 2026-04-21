@@ -8,7 +8,6 @@ export interface IForm {
 }
 
 export abstract class Form<T> extends Component<T & IForm> {
-    //Уточнить про оператор & нужен ли или оставить IForm
 
     protected submitButton: HTMLButtonElement;
     protected errorElement: HTMLElement;

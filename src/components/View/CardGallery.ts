@@ -27,9 +27,9 @@ export class CardGallery extends Card<ICardGallery> {
 
     set category(value: CategoryKey) {
         this.categoryElement.textContent = value;
-        Object.values(categoryMap).forEach((className) => {
-            this.categoryElement.classList.remove(className);
-        });
+        // Сразу задаём базовый класс вместо перебора и удаления всех классов
+        this.categoryElement.className = 'card__category';
+        
         if (value in categoryMap) {
             const className = categoryMap[value];
             this.categoryElement.classList.add(className);

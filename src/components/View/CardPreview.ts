@@ -16,7 +16,7 @@ export class CardPreview extends Card<ICardPreview> {
     protected categoryElement: HTMLElement;
     protected imageElement: HTMLImageElement;
     protected descriptionElement: HTMLElement;
-    private buyButton: HTMLButtonElement;
+    protected buyButton: HTMLButtonElement;
 
     constructor(container: HTMLElement, protected events: IEvents) {
         super(container);
@@ -33,9 +33,9 @@ export class CardPreview extends Card<ICardPreview> {
 
     set category(value: CategoryKey) {
         this.categoryElement.textContent = value;
-        Object.values(categoryMap).forEach((className) => {
-            this.categoryElement.classList.remove(className);
-        });
+        // Сразу задаём базовый класс вместо перебора и удаления всех классов
+        this.categoryElement.className = 'card__category';
+
         if (value in categoryMap) {
             const className = categoryMap[value];
             this.categoryElement.classList.add(className);
